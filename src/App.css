@@ -1,0 +1,29 @@
+.App {
+  padding: 30px;
+  display: flex;
+}
+
+.App > div {
+  margin-right: 50px;
+}
+
+.todoList {
+  border: 1px darkslategray solid;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.todoList button {
+  margin: 2px;
+}
+
+.todoList img {
+  width: 20px;
+  height: auto;
+}
+
+.activeFilter {
+  background-color: darkslategray;
+  color: white;
+  border-radius: 5%;
+}
