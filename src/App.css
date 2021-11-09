@@ -3,27 +3,36 @@
   display: flex;
 }
 
+.App button {
+  margin: 2px;
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+.todoList {
+  height: 100%;
+  border: 1px darkslategray solid;
+  border-radius: 5px;
+  padding: 10px;
+}
+
 .App > div {
   margin-right: 50px;
 }
 
-.todoList {
-  border: 1px darkslategray solid;
-  border-radius: 5px;
-  padding: 20px;
-}
-
-.todoList button {
-  margin: 2px;
-}
-
-.todoList img {
-  width: 20px;
-  height: auto;
-}
-
-.activeFilter {
-  background-color: darkslategray;
+.active-filter {
+  background-color: #9fa8a6;
+  border: 1px solid black;
+  border-radius: 3px;
   color: white;
-  border-radius: 5%;
+}
+
+.is-done {
+  opacity: 0.3;
+}
+
+.error {
+  border: 2px solid red;
+  border-radius: 3px;
+  outline: none;
 }
