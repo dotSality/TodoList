@@ -67,33 +67,24 @@ export function Todolist(props: PropsType) {
             {
                 props.tasks.map(t => {
 
-                    const onClickHandler = () => props.removeTask(t.id, props.id)
+                    const removeTaskCallback = () => props.removeTask(t.id, props.id)
 
-                    const changeCheckbox = (e: ChangeEvent<HTMLInputElement>) => props.changeTaskStatus(t.id, e.currentTarget.checked, props.id)
+                    const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>) => props.changeTaskStatus(t.id, e.currentTarget.checked, props.id)
 
                     return <li className={t.isDone ? 'is-done' : ''}
                         key={t.id}>
-                        <input onChange={changeCheckbox}
+                        <input onChange={changeTaskStatus}
                             type="checkbox" checked={t.isDone}/>
                         <span>{t.title}</span>
-                        <button onClick={onClickHandler}>x</button>
+                        <button onClick={removeTaskCallback}>x</button>
                     </li>
                 })
             }
         </ul>
         <div>
-            <button
-                className={allClass}
-                onClick={onAllClickHandler}>All
-            </button>
-            <button
-                className={activeClass}
-                onClick={onActiveClickHandler}>Active
-            </button>
-            <button
-                className={completedClass}
-                onClick={onCompletedClickHandler}>Completed
-            </button>
+            <button className={allClass} onClick={onAllClickHandler}>All</button>
+            <button className={activeClass} onClick={onActiveClickHandler}>Active</button>
+            <button className={completedClass} onClick={onCompletedClickHandler}>Completed</button>
         </div>
     </div>
 }
