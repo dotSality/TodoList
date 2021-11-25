@@ -1,4 +1,6 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import {IconButton, TextField} from '@material-ui/core';
+import {Edit} from '@material-ui/icons';
 
 type EditableSpanProps = {
     title: string
@@ -18,7 +20,7 @@ export const EditableSpan = (props: EditableSpanProps) => {
 
     const onKeyPressOffEditMode = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter')
-        offEditMode()
+            offEditMode()
     }
 
     const changeTitle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,13 +28,16 @@ export const EditableSpan = (props: EditableSpanProps) => {
     }
 
     return (
-        editMode ? <input value={title}
-                onBlur={offEditMode}
-                autoFocus onChange={changeTitle}
-                onKeyPress={onKeyPressOffEditMode}
-            />
-        : <span onDoubleClick={onEditMode}>{props.title}
-            <button onClick={onEditMode}>edit</button>
+            editMode ? <TextField
+                    style={{width: '148px'}}
+                    value={title}
+                    onBlur={offEditMode}
+                    autoFocus onChange={changeTitle}
+                    onKeyPress={onKeyPressOffEditMode}/>
+            : <span onDoubleClick={onEditMode} style={{display: 'inline-block', margin: '0 auto 0 0'}}>{props.title}
+            <IconButton style={{display: 'inline-block'}} size={'small'} onClick={onEditMode}>
+                <Edit fontSize={'small'}/>
+            </IconButton>
         </span>
     )
 }
