@@ -2,15 +2,23 @@ import {v1} from 'uuid';
 import {TodoListType} from '../App';
 import {addTlAC, changeTlFilterAC, changeTlTitleAC, removeTodolistAC, todolistsReducer} from './todolists-reducer';
 
-test('correct todolist should be removed', () => {
-    let todolistId1 = v1()
-    let todolistId2 = v1()
+let todolistId1: string;
+let todolistId2: string;
 
-    const startState: TodoListType[] = [
+let startState: TodoListType[];
+
+beforeEach(() => {
+    todolistId1 = v1()
+    todolistId2 = v1()
+
+    startState = [
         {id: todolistId1, title: 'What to learn', filter: 'all'},
         {id: todolistId2, title: 'What to watch', filter: 'completed'},
     ]
+})
 
+
+test('correct todolist should be removed', () => {
     const endState = todolistsReducer(startState, removeTodolistAC(todolistId1))
 
     expect(endState.length).toBe(1)
@@ -37,15 +45,7 @@ test('correct todolist should be added', () => {
 })
 
 test('correct todolist should change own name', () => {
-    let todolistId1 = v1()
-    let todolistId2 = v1()
-
     let newTodoListTitle = 'new todolist'
-
-    const startState: TodoListType[] = [
-        {id: todolistId1, title: 'What to learn', filter: 'all'},
-        {id: todolistId2, title: 'What to watch', filter: 'completed'},
-    ]
 
     const endState = todolistsReducer(startState, changeTlTitleAC(newTodoListTitle, todolistId2))
 
@@ -54,13 +54,6 @@ test('correct todolist should change own name', () => {
 })
 
 test('todolist should change it"s filter', () => {
-    let todolistId1 = v1()
-    let todolistId2 = v1()
-
-    const startState: TodoListType[] = [
-        {id: todolistId1, title: 'What to learn', filter: 'all'},
-        {id: todolistId2, title: 'What to watch', filter: 'completed'},
-    ]
 
     const endState = todolistsReducer(startState, changeTlFilterAC('completed', todolistId2))
 

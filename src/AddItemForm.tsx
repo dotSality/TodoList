@@ -6,8 +6,8 @@ type AddItemFormPropsType = {
     addItem: (title: string) => void
 }
 
-export const AddItemForm = (props: AddItemFormPropsType) => {
-
+export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
+    console.log('additemform')
     let [title, setTitle] = useState<string>("")
     const [error, setError] = useState<boolean>(false)
 
@@ -31,17 +31,6 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
         }
     }
 
-    const errorInputStyles = {
-        border: '2px solid red',
-        borderRadius: '3px',
-        outline: 'none',
-    }
-    const inputStyles = {
-        border: '2px solid black',
-        borderRadius: '3px',
-        outline: 'none'
-    }
-
     return (
         <div>
             <TextField
@@ -57,4 +46,4 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
             </IconButton>
         </div>
     )
-}
+})

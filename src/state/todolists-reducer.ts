@@ -34,22 +34,24 @@ export const changeTlFilterAC = (filter: FilterValuesType, id: string) :ChangeTL
 
 export type ActionType = RemoveTodoListAT | AddTodoListAT | ChangeTlTitleAT | ChangeTLFilterAT
 
-export const todolistsReducer = (todoLists: TodoListType[], action: ActionType):TodoListType[] => {
+const initialState: TodoListType[] = []
+
+export const todolistsReducer = (state = initialState, action: ActionType):TodoListType[] => {
     switch (action.type) {
         case 'REMOVE-TODOLIST':
-            return todoLists.filter(tl => tl.id !== action.todolistID);
+            return state.filter(tl => tl.id !== action.todolistID);
         case 'ADD-TODOLIST':
             let newTodolist: TodoListType = {
                 id: action.todolistId,
-                title: action.title,
+                title: action.todolistId,
                 filter: 'all'
             }
-            return [newTodolist, ...todoLists];
+            return [newTodolist, ...state];
         case 'CHANGE-TODOLIST-TITLE':
-            return [...todoLists.map(tl => tl.id === action.id ? {...tl, title: action.title} : tl)];
+            return [...state.map(tl => tl.id === action.id ? {...tl, title: action.title} : tl)];
         case 'CHANGE-FILTER':
-            return [...todoLists.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)]
+            return [...state.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)]
         default:
-            return todoLists;
+            return state;
     }
 }
