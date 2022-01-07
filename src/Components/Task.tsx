@@ -1,23 +1,25 @@
 import {useDispatch} from 'react-redux';
-import {changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from './state/tasks-reducer';
+import {changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from '../state/tasks-reducer';
 import React, {ChangeEvent, useCallback} from 'react';
 import {Checkbox, IconButton, ListItem} from '@material-ui/core';
-import {EditableSpan} from './EditableSpan';
+import {EditableSpan} from '../EditableSpan';
 import {Delete} from '@material-ui/icons';
-import {TaskType} from './App';
+import {TaskType} from '../AppWithRedux';
 
 type TaskPropsType = {
     task: TaskType,
     todolistId: string,
 }
 
-export const Task = (props: TaskPropsType) => {
-    const dispatch = useDispatch()
-    const removeTaskCallback = () => dispatch(removeTaskAC(props.task.id, props.todolistId))
+export const Task = React.memo((props: TaskPropsType) => {
 
-    const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>) => {
+    const dispatch = useDispatch()
+    const removeTaskCallback = useCallback(() => dispatch(removeTaskAC(props.task.id, props.todolistId)),
+        [dispatch, props.task.id, props.todolistId])
+
+    const changeTaskStatus = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         dispatch(changeTaskStatusAC(props.task.id, e.currentTarget.checked, props.todolistId))
-    }
+    }, [dispatch, props.task.id, props.todolistId])
 
     const changeTitle = useCallback((title: string) => {
         dispatch(changeTaskTitleAC(props.task.id, title, props.todolistId))
@@ -36,4 +38,4 @@ export const Task = (props: TaskPropsType) => {
             <Delete fontSize={'small'}/>
         </IconButton>
     </ListItem>
-}
+})

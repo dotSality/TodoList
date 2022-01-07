@@ -1,14 +1,14 @@
 import React, {useCallback} from 'react';
-import {TaskType} from './App';
+import {TaskType} from '../AppWithRedux';
 import {AddItemForm} from './AddItemForm';
-import {EditableSpan} from './EditableSpan';
+import {EditableSpan} from '../EditableSpan';
 import {Button, ButtonGroup, IconButton, List, Typography} from '@material-ui/core';
 import {Delete} from '@material-ui/icons';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppRootStateType} from './state/store';
-import {TodoListType} from './AppWithRedux';
-import {addTaskAC} from './state/tasks-reducer';
-import {changeTlFilterAC, changeTlTitleAC, removeTodolistAC} from './state/todolists-reducer';
+import {AppRootStateType} from '../state/store';
+import {TodoListType} from '../AppWithRedux';
+import {addTaskAC} from '../state/tasks-reducer';
+import {changeTlFilterAC, changeTlTitleAC, removeTodolistAC} from '../state/todolists-reducer';
 import {Task} from './Task';
 
 type PropsType = {
