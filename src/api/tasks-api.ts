@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
+import {ResponseType} from './todolist-api';
 
 const axiosInstance = axios.create({
     baseURL: `https://social-network.samuraijs.com/api/1.1/todo-lists/`,
@@ -10,24 +11,58 @@ const axiosInstance = axios.create({
 
 export const tasksAPI = {
     getTasks(tlId: string) {
-        return axiosInstance.get(`${tlId}/tasks`).then(res => res.data)
+        return axiosInstance.get<Response<TaskType[]>>(`${tlId}/tasks`).then(res => res.data)
     },
     createTask(tlId: string, title: string) {
-        return axiosInstance.post(`${tlId}/tasks`, {title}).then(res => res.data)
+        return axiosInstance.post<{title: string},AxiosResponse<ResponseType<{ item: TaskType }>>>(`${tlId}/tasks`, {title}).then(res => res.data.data)
     },
     deleteTask(tlId: string, taskId: string) {
-        return axiosInstance.delete(`${tlId}/tasks/${taskId}`).then(res => res.data)
+        return axiosInstance.delete<Response>(`${tlId}/tasks/${taskId}`).then(res => res.data)
     },
-    updateTask(tlId: string, taskId: string, task: TaskType) {
-       return axiosInstance.put(`${tlId}/tasks/${taskId}`, task)
+    updateTask(tlId: string, taskId: string, task: TaskModelType) {
+        return axiosInstance.put<TaskModelType, AxiosResponse<ResponseType<{ item: TaskType }>>>(`${tlId}/tasks/${taskId}`, task).then(res => res.data.data.item)
     }
+}
+
+export enum TaskStatuses {
+    New = 0,
+    InProgress = 1,
+    Completed = 2,
+    Draft = 3,
+}
+
+export enum TaskPriorities {
+    Low = 0,
+    Middle = 1,
+    High = 2,
+    Urgently = 3,
+    Later = 4,
 }
 
 export type TaskType = {
     title: string,
-    description: string | null,
-    status: number,
+    description: string,
+    status: TaskStatuses,
     priority: number,
-    startDate: any,
-    deadline: any,
+    startDate: string,
+    deadline: string,
+    id: string,
+    todoListId: string,
+    order: string,
+    addedDate: string,
+}
+
+export type TaskModelType = {
+    title: string,
+    description: string,
+    status: TaskStatuses,
+    priority: TaskPriorities,
+    startDate: string,
+    deadline: string,
+}
+
+type Response<D = {}> = {
+    items: D,
+    error: string[],
+    totalCount: number
 }

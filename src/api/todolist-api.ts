@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
+import {TodoDomainType} from '../state/todolists-reducer';
 
 const axiosInstance = axios.create({
     baseURL: `https://social-network.samuraijs.com/api/1.1/`,
@@ -10,27 +11,27 @@ const axiosInstance = axios.create({
 
 export const todolistApi = {
     getTLs() {
-        return axiosInstance.get<TLType[]>(`todo-lists`).then(res => res.data)
+        return axiosInstance.get<TodoDomainType[]>(`todo-lists`).then(res => res.data)
     },
     createTL(title: string) {
-        return axiosInstance.post<Response<{ item: TLType }>>(`todo-lists`, {title}).then(res => res.data)
+        return axiosInstance.post<{title: string}, AxiosResponse<ResponseType<{ item: TodoDomainType }>>>(`todo-lists`, {title}).then(res => res.data.data)
     },
     deleteTL(id: string) {
         return axiosInstance.delete<Response>(`/todo-lists/${id}`).then(res => res.data)
     },
     updateTLTitle(id: string, title: string) {
-        return axiosInstance.put<Response>(`/todo-lists/${id}`, {title}).then(res => res.data)
+        return axiosInstance.put<{title: string},Response>(`/todo-lists/${id}`, {title})
     },
 }
 
-type TLType = {
+export type TodoType = {
     id: string,
     title: string,
     addedDate: string,
     order: number,
 }
 
-type Response<T = {}> = {
+export type ResponseType<T = {}> = {
     fieldsErrors: string[],
     messages: string[],
     resultCode: number,

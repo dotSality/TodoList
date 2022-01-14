@@ -1,57 +1,66 @@
-import {FilterValuesType, TodoListType} from '../AppWithRedux';
-import {v1} from 'uuid';
+import {ThunkAction} from 'redux-thunk';
+import {AppRootStateType} from './store';
+import {todolistApi, TodoType} from '../api/todolist-api';
 
-export type RemoveTodoListAT = {
-    type: 'REMOVE-TODOLIST',
-    todolistID: string
+export type RemoveTodoListAT = ReturnType<typeof removeTodolistAC>
+export type setTodoAT = ReturnType<typeof setTodoAC>
+type ChangeTodoTitleAT = ReturnType<typeof changeTodoTitleAC>
+type ChangeTodoFilterAT = ReturnType<typeof changeTodoFilterAC>
+type AddTodoAT = ReturnType<typeof addTodoAC>
+
+export const removeTodolistAC = (todolistID: string) => ({type: 'REMOVE-TODO', todolistID} as const)
+export const addTodoAC = (title: string, todo: TodoDomainType) => ({type: 'ADD-TODO', title, todo} as const)
+export const setTodoAC = (todolists: TodoDomainType[]) => ({type: 'SET-TODO', todolists} as const)
+export const changeTodoTitleAC = (title: string, id: string) => ({type: 'CHANGE-TODO-TITLE', title, id} as const)
+export const changeTodoFilterAC = (filter: FilterValuesType, id: string) => ({type: 'CHANGE-FILTER', filter, id} as const)
+
+export type TodoActionType = RemoveTodoListAT | setTodoAT | ChangeTodoTitleAT | ChangeTodoFilterAT | AddTodoAT
+
+export type FilterValuesType = "all" | "active" | "completed";
+export type TodoDomainType = TodoType & {
+    filter: FilterValuesType
 }
 
-export type AddTodoListAT = {
-    type: 'ADD-TODOLIST',
-    title: string,
-    todolistId: string
-}
+const initialState: TodoDomainType[] = []
 
-type ChangeTlTitleAT = {
-    type: 'CHANGE-TODOLIST-TITLE',
-    title: string,
-    id: string
-}
-
-type ChangeTLFilterAT = {
-    type: 'CHANGE-FILTER',
-    filter: FilterValuesType,
-    id: string
-}
-
-export const removeTodolistAC = (todolistID: string) :RemoveTodoListAT => ({type: 'REMOVE-TODOLIST', todolistID})
-
-export const addTlAC = (title: string) :AddTodoListAT => ({type: 'ADD-TODOLIST', title, todolistId: v1()})
-
-export const changeTlTitleAC = (title: string, id: string) :ChangeTlTitleAT => ({type: 'CHANGE-TODOLIST-TITLE', title, id})
-
-export const changeTlFilterAC = (filter: FilterValuesType, id: string) :ChangeTLFilterAT => ({type: 'CHANGE-FILTER', filter, id})
-
-export type ActionType = RemoveTodoListAT | AddTodoListAT | ChangeTlTitleAT | ChangeTLFilterAT
-
-const initialState: TodoListType[] = []
-
-export const todolistsReducer = (state = initialState, action: ActionType):TodoListType[] => {
+export const todolistsReducer = (state = initialState, action: TodoActionType):TodoDomainType[] => {
     switch (action.type) {
-        case 'REMOVE-TODOLIST':
+        case 'REMOVE-TODO':
             return state.filter(tl => tl.id !== action.todolistID);
-        case 'ADD-TODOLIST':
-            let newTodolist: TodoListType = {
-                id: action.todolistId,
-                title: action.title,
-                filter: 'all'
-            }
-            return [newTodolist, ...state];
-        case 'CHANGE-TODOLIST-TITLE':
+        case 'SET-TODO':
+            return action.todolists.map(tl => ({...tl, filter: 'all'}));
+        case 'ADD-TODO':
+            return [{...action.todo, filter: 'all'}, ...state]
+        case 'CHANGE-TODO-TITLE':
             return [...state.map(tl => tl.id === action.id ? {...tl, title: action.title} : tl)];
         case 'CHANGE-FILTER':
             return [...state.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)]
         default:
             return state;
     }
+}
+
+// THUNK
+
+type ThunkType = ThunkAction<void, AppRootStateType, unknown, TodoActionType>
+
+export const getTodoTC = (): ThunkType => (dispatch, getState) => {
+    todolistApi.getTLs()
+        .then(res => dispatch(setTodoAC(res)))
+}
+
+export const removeTodoTC = (tlId: string): ThunkType => (dispatch) => {
+    todolistApi.deleteTL(tlId)
+        .then(res => dispatch(removeTodolistAC(tlId)))
+}
+
+export const createTodoTC = (title: string): ThunkType => (dispatch) => {
+    todolistApi.createTL(title)
+        // .then(res => dispatch(addTodoAC(title, res)))
+        .then(res => dispatch(addTodoAC(title, res.item)))
+}
+
+export const changeTodoTitleTC = (tlId: string, title: string):ThunkType => (dispatch) => {
+    todolistApi.updateTLTitle(tlId, title)
+        .then(res => dispatch(changeTodoTitleAC(title, tlId)))
 }

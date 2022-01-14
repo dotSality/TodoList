@@ -1,10 +1,10 @@
 import {useDispatch} from 'react-redux';
-import {changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from '../state/tasks-reducer';
+import {updateTaskAC, changeTaskTitleAC, deleteTaskTC, updateTaskStatusTC, changeTaskTitleTC} from '../state/tasks-reducer';
 import React, {ChangeEvent, useCallback} from 'react';
 import {Checkbox, IconButton, ListItem} from '@material-ui/core';
 import {EditableSpan} from '../EditableSpan';
 import {Delete} from '@material-ui/icons';
-import {TaskType} from '../AppWithRedux';
+import {TaskStatuses, TaskType} from '../api/tasks-api';
 
 type TaskPropsType = {
     task: TaskType,
@@ -14,23 +14,24 @@ type TaskPropsType = {
 export const Task = React.memo((props: TaskPropsType) => {
 
     const dispatch = useDispatch()
-    const removeTaskCallback = useCallback(() => dispatch(removeTaskAC(props.task.id, props.todolistId)),
+    const removeTaskCallback = useCallback(() => dispatch(deleteTaskTC(props.todolistId, props.task.id)),
         [dispatch, props.task.id, props.todolistId])
 
     const changeTaskStatus = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(changeTaskStatusAC(props.task.id, e.currentTarget.checked, props.todolistId))
+        let value = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New
+        dispatch(updateTaskStatusTC(props.todolistId, props.task.id, value))
     }, [dispatch, props.task.id, props.todolistId])
 
     const changeTitle = useCallback((title: string) => {
-        dispatch(changeTaskTitleAC(props.task.id, title, props.todolistId))
+        dispatch(changeTaskTitleTC(props.todolistId, props.task.id, title))
     }, [dispatch, props.task.id, props.todolistId])
     return <ListItem
         style={{padding: '0', display: 'flex', justifyContent: 'space-between'}}
         alignItems={'center'}
-        className={props.task.isDone ? 'is-done' : ''}>
+        className={props.task.status === TaskStatuses.Completed ? 'is-done' : ''}>
         <Checkbox
             onChange={changeTaskStatus}
-            checked={props.task.isDone}
+            checked={props.task.status === TaskStatuses.Completed}
             color={'primary'}
             size={'small'}/>
         <EditableSpan setNewTitle={changeTitle} title={props.task.title}/>
