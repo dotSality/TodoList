@@ -14,13 +14,13 @@ export const todolistApi = {
         return axiosInstance.get<TodoDomainType[]>(`todo-lists`).then(res => res.data)
     },
     createTL(title: string) {
-        return axiosInstance.post<{title: string}, AxiosResponse<ResponseType<{ item: TodoDomainType }>>>(`todo-lists`, {title}).then(res => res.data.data)
+        return axiosInstance.post<{title: string}, AxiosResponse<ResponseType<{ item: TodoDomainType }>>>(`todo-lists`, {title}).then(res => res.data)
     },
     deleteTL(id: string) {
-        return axiosInstance.delete<Response>(`/todo-lists/${id}`).then(res => res.data)
+        return axiosInstance.delete<ResponseType>(`/todo-lists/${id}`).then(res => res.data)
     },
     updateTLTitle(id: string, title: string) {
-        return axiosInstance.put<{title: string},Response>(`/todo-lists/${id}`, {title})
+        return axiosInstance.put<{title: string},ResponseType>(`/todo-lists/${id}`, {title})
     },
 }
 

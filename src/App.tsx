@@ -1,27 +1,28 @@
 import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {AddItemForm} from './Components/AddItemForm';
-import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@material-ui/core';
-import {Menu} from '@material-ui/icons';
-import {createTodoTC, getTodoTC, setTodoAC} from './state/todolists-reducer';
+import {createTodoTC, getTodoTC} from './state/todolists-reducer';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppRootStateType} from './state/store';
+import {AppRootStateType, useAppSelector} from './state/store';
 import {Todolist1} from './Components/TodoList1';
 import {TodoType} from './api/todolist-api';
+import {Menu} from '@mui/icons-material';
+import {AppBar, Button, Container, Grid, IconButton, LinearProgress, Paper, Toolbar, Typography} from '@mui/material';
+import {ErrorSnackbar} from './Components/ErrorSnackbar';
 
 function App() {
 
     const todoLists = useSelector<AppRootStateType, TodoType[]>(state => state.todolists)
-
+    const {status} = useAppSelector(state => state.app)
     const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(getTodoTC())
-    },[])
+    }, [])
 
     const addTodoList = useCallback((title: string) => {
         dispatch(createTodoTC(title))
-    },[dispatch])
+    }, [dispatch])
 
     const todoListsComponents = todoLists.map(tl => {
         return (
@@ -49,6 +50,7 @@ function App() {
                     <Button color="inherit" variant={"outlined"}>Login</Button>
                 </Toolbar>
             </AppBar>
+            {status === 'loading' && <LinearProgress/>}
             <Container fixed>
                 <Grid container style={{padding: '30px 0'}}>
                     <AddItemForm addItem={addTodoList}/>
@@ -57,6 +59,7 @@ function App() {
                     </Grid>
                 </Grid>
             </Container>
+            <ErrorSnackbar/>
         </div>
     )
 }

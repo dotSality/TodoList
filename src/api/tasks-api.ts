@@ -14,7 +14,7 @@ export const tasksAPI = {
         return axiosInstance.get<Response<TaskType[]>>(`${tlId}/tasks`).then(res => res.data)
     },
     createTask(tlId: string, title: string) {
-        return axiosInstance.post<{title: string},AxiosResponse<ResponseType<{ item: TaskType }>>>(`${tlId}/tasks`, {title}).then(res => res.data.data)
+        return axiosInstance.post<{title: string},AxiosResponse<ResponseType<{ item: TaskType }>>>(`${tlId}/tasks`, {title}).then(res => res.data)
     },
     deleteTask(tlId: string, taskId: string) {
         return axiosInstance.delete<Response>(`${tlId}/tasks/${taskId}`).then(res => res.data)

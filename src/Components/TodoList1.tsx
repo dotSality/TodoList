@@ -2,13 +2,13 @@ import React, {useCallback, useEffect} from 'react';
 import {TaskStatuses, TaskType} from '../api/tasks-api';
 import {AddItemForm} from './AddItemForm';
 import {EditableSpan} from '../EditableSpan';
-import {Button, ButtonGroup, IconButton, List, Typography} from '@material-ui/core';
-import {Delete} from '@material-ui/icons';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppRootStateType} from '../state/store';
-import {changeTodoFilterAC, changeTodoTitleAC, changeTodoTitleTC, removeTodolistAC, removeTodoTC, TodoDomainType} from '../state/todolists-reducer';
+import {changeTodoFilterAC, changeTodoTitleTC, removeTodoTC, TodoDomainType} from '../state/todolists-reducer';
 import {createTaskTC, getTasksTC} from '../state/tasks-reducer';
 import {Task} from './Task';
+import {Button, ButtonGroup, IconButton, List, Typography} from '@mui/material';
+import {Delete} from '@mui/icons-material';
 
 type PropsType = {
     todolistId: string
@@ -47,12 +47,13 @@ export const Todolist1 = React.memo(function (props: PropsType) {
 
     return <div className={'todoList'}>
         <Typography align={'center'}>
-            <EditableSpan setNewTitle={changeTodolistTitle} title={props.title}/>
-            <IconButton onClick={removeTodolist}>
+            <EditableSpan disabled={todoList.entityStatus === 'loading'}
+                setNewTitle={changeTodolistTitle} title={props.title}/>
+            <IconButton disabled={todoList.entityStatus === 'loading'} onClick={removeTodolist}>
                 <Delete/>
             </IconButton>
         </Typography>
-        <AddItemForm addItem={addTask}/>
+        <AddItemForm disabled={todoList.entityStatus === 'loading'} addItem={addTask}/>
         <List>
             {
                 tasksForRender && tasksForRender.map(t => {
@@ -61,10 +62,13 @@ export const Todolist1 = React.memo(function (props: PropsType) {
             }
         </List>
         <div>
-            <ButtonGroup variant={'contained'} size={'small'} disableElevation>
-                <Button color={todoList.filter === 'all' ? 'secondary' : 'primary'} onClick={onAllClickHandler}>All</Button>
-                <Button color={todoList.filter === 'active' ? 'secondary' : 'primary'} onClick={onActiveClickHandler}>Active</Button>
-                <Button color={todoList.filter === 'completed' ? 'secondary' : 'primary'} onClick={onCompletedClickHandler}>Completed</Button>
+            <ButtonGroup variant={'outlined'} aria-label={'medium button group'} disableElevation>
+                <Button variant={todoList.filter === 'all' ? 'contained' : 'outlined'}
+                    disabled={todoList.entityStatus === 'loading'} onClick={onAllClickHandler}>All</Button>
+                <Button variant={todoList.filter === 'active' ? 'contained' : 'outlined'}
+                    disabled={todoList.entityStatus === 'loading'} onClick={onActiveClickHandler}>Active</Button>
+                <Button variant={todoList.filter === 'completed' ? 'contained' : 'outlined'}
+                    disabled={todoList.entityStatus === 'loading'} onClick={onCompletedClickHandler}>Completed</Button>
             </ButtonGroup>
         </div>
     </div>
