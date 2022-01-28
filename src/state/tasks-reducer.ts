@@ -1,5 +1,5 @@
 import {TaskModelType, tasksAPI, TaskStatuses, TaskType} from '../api/tasks-api';
-import {RemoveTodoListAT, setTodoAT} from './todolists-reducer';
+import {ClearTodoDataAT, RemoveTodoListAT, setTodoAT} from './todolists-reducer';
 import {ThunkType} from './store';
 import {setAppErrorAC, setAppStatusAC} from './app-reducer';
 import {handleServerNetworkError} from '../utils/error-utils';
@@ -23,6 +23,7 @@ export type TaskActionType = RemoveTaskAT
     | setTodoAT
     | RemoveTodoListAT
     | SetTasksAT
+    | ClearTodoDataAT
 
 type TasksStateType = {
     [key: string]: Array<TaskType>
@@ -56,6 +57,8 @@ export const tasksReducer = (state = initialState, action: TaskActionType): Task
             delete stateCopy[action.todolistID]
             return stateCopy
         }
+        case 'TODO/CLEAR-DATA':
+            return {};
         default:
             return state;
     }
@@ -66,63 +69,62 @@ export const tasksReducer = (state = initialState, action: TaskActionType): Task
 export const getTasksTC = (tlId: string): ThunkType =>
     (dispatch) => {
         dispatch(setAppStatusAC('loading'))
-    tasksAPI.getTasks(tlId)
-        .then(res => {
-            dispatch(setTasksAC(tlId, res.items))
-            dispatch(setAppStatusAC('idle'))
-        })
-}
+        tasksAPI.getTasks(tlId)
+            .then(res => {
+                dispatch(setTasksAC(tlId, res.items))
+            })
+    }
 
 export const deleteTaskTC = (tlId: string, taskId: string): ThunkType =>
     (dispatch) => {
-    dispatch(setAppStatusAC('loading'))
-    tasksAPI.deleteTask(tlId, taskId)
-        .then(res => {
-            dispatch(removeTaskAC(taskId, tlId))
-            dispatch(setAppStatusAC('idle'))
-        })
-}
+        dispatch(setAppStatusAC('loading'))
+        tasksAPI.deleteTask(tlId, taskId)
+            .then(res => {
+                dispatch(removeTaskAC(taskId, tlId))
+                dispatch(setAppStatusAC('idle'))
+            })
+    }
 
 export const createTaskTC = (tlId: string, title: string): ThunkType =>
     (dispatch) => {
-    dispatch(setAppStatusAC('loading'))
-    tasksAPI.createTask(tlId, title)
-        .then(res => {
-            if (res.resultCode === 0) {
-                dispatch(addTaskAC(res.data.item))
-                dispatch(setAppStatusAC('idle'))
-            } else {
-                if (res.messages.length) {
-                    dispatch(setAppErrorAC(res.messages[0]))
+        dispatch(setAppStatusAC('loading'))
+        tasksAPI.createTask(tlId, title)
+            .then(res => {
+                if (res.resultCode === 0) {
+                    dispatch(addTaskAC(res.data.item))
+                    dispatch(setAppStatusAC('idle'))
                 } else {
-                    dispatch(setAppErrorAC('Some error occured'))
+                    if (res.messages.length) {
+                        dispatch(setAppErrorAC(res.messages[0]))
+                    } else {
+                        dispatch(setAppErrorAC('Some error occured'))
+                    }
+                    dispatch(setAppStatusAC('failed'))
                 }
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.message))
                 dispatch(setAppStatusAC('failed'))
-            }
-        })
-        .catch(err => {
-            dispatch(setAppErrorAC(err.message))
-            dispatch(setAppStatusAC('failed'))
-        })
-}
+            })
+    }
 
 export const updateTaskStatusTC = (tlId: string, taskId: string, status: TaskStatuses): ThunkType => {
-   return (dispatch, getState) => {
-       dispatch(setAppStatusAC('loading'))
-       const task = getState().tasks[tlId].find(t => t.id === taskId)
+    return (dispatch, getState) => {
+        dispatch(setAppStatusAC('loading'))
+        const task = getState().tasks[tlId].find(t => t.id === taskId)
 
-       if (task) {
-           let model: TaskModelType = {...task, status}
-           tasksAPI.updateTask(tlId, taskId, model)
-               .then(res => {
-                   dispatch(updateTaskAC(taskId, model, tlId))
-                   dispatch(setAppStatusAC('idle'))
-               })
-               .catch(err => {
-                   handleServerNetworkError(err, dispatch)
-               })
+        if (task) {
+            let model: TaskModelType = {...task, status}
+            tasksAPI.updateTask(tlId, taskId, model)
+                .then(res => {
+                    dispatch(updateTaskAC(taskId, model, tlId))
+                    dispatch(setAppStatusAC('idle'))
+                })
+                .catch(err => {
+                    handleServerNetworkError(err, dispatch)
+                })
 
-       }
+        }
     }
 }
 
@@ -131,7 +133,7 @@ export const changeTaskTitleTC = (tlId: string, taskId: string, title: string): 
         dispatch(setAppStatusAC('loading'))
         const task = getState().tasks[tlId].find(t => t.id === taskId)
 
-        if(task) {
+        if (task) {
             let model: TaskModelType = {...task, title}
             tasksAPI.updateTask(tlId, taskId, model)
                 .then(res => {

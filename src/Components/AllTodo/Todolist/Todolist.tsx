@@ -1,12 +1,12 @@
 import React, {useCallback, useEffect} from 'react';
-import {TaskStatuses, TaskType} from '../api/tasks-api';
-import {AddItemForm} from './AddItemForm';
-import {EditableSpan} from '../EditableSpan';
+import {TaskStatuses, TaskType} from '../../../api/tasks-api';
+import {AddItemForm} from '../../AddItemForm/AddItemForm';
+import {EditableSpan} from '../../../EditableSpan';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppRootStateType} from '../state/store';
-import {changeTodoFilterAC, changeTodoTitleTC, removeTodoTC, TodoDomainType} from '../state/todolists-reducer';
-import {createTaskTC, getTasksTC} from '../state/tasks-reducer';
-import {Task} from './Task';
+import {AppRootStateType, useAppSelector} from '../../../state/store';
+import {changeTodoFilterAC, changeTodoTitleTC, removeTodoTC, TodoDomainType} from '../../../state/todolists-reducer';
+import {createTaskTC, getTasksTC} from '../../../state/tasks-reducer';
+import {Task} from './Task/Task';
 import {Button, ButtonGroup, IconButton, List, Typography} from '@mui/material';
 import {Delete} from '@mui/icons-material';
 
@@ -15,15 +15,11 @@ type PropsType = {
     title: string
 }
 
-export const Todolist1 = React.memo(function (props: PropsType) {
+export const Todolist = React.memo(function (props: PropsType) {
 
-    const todoList = useSelector<AppRootStateType, TodoDomainType>(state => state.todolists.filter(tl => tl.id === props.todolistId)[0])
-    const tasks = useSelector<AppRootStateType, TaskType[]>(state => state.tasks[props.todolistId])
+    const todoList = useAppSelector(state => state.todolists.filter(tl => tl.id === props.todolistId)[0])
+    const tasks = useAppSelector(state => state.tasks[props.todolistId])
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        dispatch(getTasksTC(todoList.id))
-    },[])
 
     const addTask = useCallback((title: string) => {
         dispatch(createTaskTC(todoList.id, title));

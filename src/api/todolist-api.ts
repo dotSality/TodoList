@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 
 export const todolistApi = {
     getTLs() {
-        return axiosInstance.get<TodoDomainType[]>(`todo-lists`).then(res => res.data)
+        return axiosInstance.get<TodoDomainType[]>(`todo-lists`)
     },
     createTL(title: string) {
         return axiosInstance.post<{title: string}, AxiosResponse<ResponseType<{ item: TodoDomainType }>>>(`todo-lists`, {title}).then(res => res.data)
@@ -32,7 +32,7 @@ export type TodoType = {
 }
 
 export type ResponseType<T = {}> = {
-    fieldsErrors: string[],
+    fieldsErrors?: string[],
     messages: string[],
     resultCode: number,
     data: T

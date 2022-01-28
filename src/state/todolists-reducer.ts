@@ -1,8 +1,8 @@
-import {ThunkAction} from 'redux-thunk';
-import {AppRootStateType, ThunkType} from './store';
+import {ThunkType} from './store';
 import {todolistApi, TodoType} from '../api/todolist-api';
-import {RequestStatusType, setAppErrorAC, setAppStatusAC} from './app-reducer';
+import {RequestStatusType, setAppStatusAC} from './app-reducer';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
+import {getTasksTC} from './tasks-reducer';
 
 export type RemoveTodoListAT = ReturnType<typeof removeTodolistAC>
 export type setTodoAT = ReturnType<typeof setTodoAC>
@@ -10,6 +10,7 @@ type ChangeTodoTitleAT = ReturnType<typeof changeTodoTitleAC>
 type ChangeTodoFilterAT = ReturnType<typeof changeTodoFilterAC>
 type AddTodoAT = ReturnType<typeof addTodoAC>
 type ChangeEntityType = ReturnType<typeof changeTlEntityAC>
+export type ClearTodoDataAT = ReturnType<typeof clearTodoDataAC>
 
 export const removeTodolistAC = (todolistID: string) => ({type: 'TODO/REMOVE-TODO', todolistID} as const)
 export const addTodoAC = (title: string, todo: TodoDomainType) => ({type: 'TODO/ADD-TODO', title, todo} as const)
@@ -18,9 +19,10 @@ export const changeTodoTitleAC = (title: string, id: string) => ({type: 'TODO/CH
 export const changeTodoFilterAC = (filter: FilterValuesType, id: string) => ({type: 'TODO/CHANGE-FILTER', filter, id} as const)
 export const changeTlEntityAC = (tlId: string, entityStatus: RequestStatusType) =>
     ({type: 'TODO/CHANGE-ENTITY', tlId, entityStatus} as const)
+export const clearTodoDataAC = () => ({type: 'TODO/CLEAR-DATA'} as const)
 
 export type TodoActionType = RemoveTodoListAT | setTodoAT | ChangeTodoTitleAT
-    | ChangeTodoFilterAT | AddTodoAT | ChangeEntityType
+    | ChangeTodoFilterAT | AddTodoAT | ChangeEntityType | ClearTodoDataAT
 
 export type FilterValuesType = "all" | "active" | "completed";
 export type TodoDomainType = TodoType & {
@@ -44,6 +46,8 @@ export const todolistsReducer = (state = initialState, action: TodoActionType): 
             return [...state.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)]
         case 'TODO/CHANGE-ENTITY':
             return state.map(tl => tl.id === action.tlId ? {...tl, entityStatus: action.entityStatus} : tl)
+        case 'TODO/CLEAR-DATA':
+            return [];
         default:
             return state;
     }
@@ -56,11 +60,15 @@ export const getTodoTC = (): ThunkType =>
         dispatch(setAppStatusAC('loading'))
         todolistApi.getTLs()
             .then(res => {
-                if(res) {
-                    dispatch(setTodoAC(res))
+                if(res.data) {
+                    dispatch(setTodoAC(res.data))
+                    return res.data
+                }
+            })
+            .then(todos => {
+                if (todos) {
+                    todos.forEach(tl => dispatch(getTasksTC(tl.id)))
                     dispatch(setAppStatusAC('idle'))
-                } else {
-                    handleServerAppError(res, dispatch)
                 }
             })
             .catch(err => handleServerNetworkError(err, dispatch))

@@ -1,41 +1,36 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
-import {AddItemForm} from './Components/AddItemForm';
-import {createTodoTC, getTodoTC} from './state/todolists-reducer';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppRootStateType, useAppSelector} from './state/store';
-import {Todolist1} from './Components/TodoList1';
-import {TodoType} from './api/todolist-api';
+import {useDispatch} from 'react-redux';
+import {useAppSelector} from './state/store';
 import {Menu} from '@mui/icons-material';
-import {AppBar, Button, Container, Grid, IconButton, LinearProgress, Paper, Toolbar, Typography} from '@mui/material';
-import {ErrorSnackbar} from './Components/ErrorSnackbar';
+import {AppBar, Button, CircularProgress, Container, IconButton, LinearProgress, Toolbar, Typography} from '@mui/material';
+import {ErrorSnackbar} from './Components/ErrorSnackbar/ErrorSnackbar';
+import {AllTodo} from './Components/AllTodo/AllTodo';
+import {Navigate, Route, Routes} from 'react-router-dom';
+import {Login} from './Components/Login/Login';
+import {ErrorPage} from './Components/Error/Error';
+import {initAppTC} from './state/app-reducer';
+import {logoutTC} from './state/auth-reducer';
 
 function App() {
 
-    const todoLists = useSelector<AppRootStateType, TodoType[]>(state => state.todolists)
-    const {status} = useAppSelector(state => state.app)
+    const {status, isInit} = useAppSelector(state => state.app)
     const dispatch = useDispatch()
+    const {isLoggedIn, login} = useAppSelector(state => state.auth)
 
     useEffect(() => {
-        dispatch(getTodoTC())
+        dispatch(initAppTC())
     }, [])
 
-    const addTodoList = useCallback((title: string) => {
-        dispatch(createTodoTC(title))
-    }, [dispatch])
+    const logoutHandler = () => dispatch(logoutTC())
 
-    const todoListsComponents = todoLists.map(tl => {
-        return (
-            <Grid item key={tl.id}>
-                <Paper elevation={14} style={{padding: '10px'}}>
-                    <Todolist1
-                        todolistId={tl.id}
-                        title={tl.title}
-                    />
-                </Paper>
-            </Grid>
-        )
-    })
+    if (!isInit) {
+        return <div
+            style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+            <CircularProgress/>
+        </div>
+    }
+
     return (
         <div className={'App'}>
             <AppBar position="static">
@@ -47,17 +42,19 @@ function App() {
                         variant="h6">
                         Todolists
                     </Typography>
-                    <Button color="inherit" variant={"outlined"}>Login</Button>
+                    {isLoggedIn && <div>
+                        <span style={{padding: '20px'}}>{login}</span><Button onClick={logoutHandler} color="inherit" variant={"outlined"}>Logout</Button>
+                    </div>}
                 </Toolbar>
             </AppBar>
             {status === 'loading' && <LinearProgress/>}
             <Container fixed>
-                <Grid container style={{padding: '30px 0'}}>
-                    <AddItemForm addItem={addTodoList}/>
-                    <Grid container spacing={5}>
-                        {todoListsComponents}
-                    </Grid>
-                </Grid>
+                <Routes>
+                    <Route path={'/'} element={<AllTodo/>}/>
+                    <Route path={'/login'} element={<Login/>}/>
+                    <Route path={'/error-page'} element={<ErrorPage/>}/>
+                    <Route path={'*'} element={<Navigate to={'/error-page'}/>}/>
+                </Routes>
             </Container>
             <ErrorSnackbar/>
         </div>
