@@ -20,7 +20,7 @@ function App() {
 
     useEffect(() => {
         dispatch(initAppTC())
-    }, [])
+    }, [isLoggedIn])
 
     const logoutHandler = () => dispatch(logoutTC())
 

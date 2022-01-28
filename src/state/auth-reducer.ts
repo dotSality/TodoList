@@ -28,7 +28,6 @@ export const loginTC = (data: LoginParamsType): ThunkType => async (dispatch) =>
         let res = await authAPI.login(data)
         if (res.resultCode === 0) {
             dispatch(setIsLoggedIn(true))
-            dispatch(initAppTC())
             dispatch(setAppStatusAC('succeeded'))
         } else {
             handleServerAppError(res, dispatch)
