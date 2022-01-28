@@ -1,6 +1,6 @@
 import {ThunkType} from './store';
 import {authAPI, LoginParamsType} from './auth-api';
-import {setAppStatusAC} from './app-reducer';
+import {initAppTC, setAppStatusAC} from './app-reducer';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
 import {clearTodoDataAC} from './todolists-reducer';
 
@@ -26,9 +26,9 @@ export const loginTC = (data: LoginParamsType): ThunkType => async (dispatch) =>
     dispatch(setAppStatusAC('loading'))
     try {
         let res = await authAPI.login(data)
-        console.log(res)
         if (res.resultCode === 0) {
             dispatch(setIsLoggedIn(true))
+            dispatch(initAppTC())
             dispatch(setAppStatusAC('succeeded'))
         } else {
             handleServerAppError(res, dispatch)

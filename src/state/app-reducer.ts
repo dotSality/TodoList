@@ -27,11 +27,14 @@ export const appReducer = (state: InitialStateType = initialState, action: AppAc
 }
 
 export const initAppTC = (): ThunkType => async (dispatch) => {
+    debugger
     dispatch(setAppStatusAC('loading'))
     try {
+        debugger
         let res = await authAPI.me()
         if (res.data.resultCode === 0) {
             dispatch(setUserLogin(res.data.data.login))
+            console.log(res.data.data.login)
             dispatch(setIsLoggedIn(true))
             dispatch(setAppStatusAC('succeeded'))
         } else {
