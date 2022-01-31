@@ -8,7 +8,7 @@ import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {useFormik} from 'formik';
-import {LoginParamsType} from '../../state/auth-api';
+import {LoginParamsType} from '../../api/auth-api';
 import {loginTC} from '../../state/auth-reducer';
 import {useDispatch} from 'react-redux';
 import {useAppSelector} from '../../state/store';

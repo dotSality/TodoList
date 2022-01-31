@@ -20,7 +20,7 @@ export const todolistApi = {
         return axiosInstance.delete<ResponseType>(`/todo-lists/${id}`).then(res => res.data)
     },
     updateTLTitle(id: string, title: string) {
-        return axiosInstance.put<{title: string},ResponseType>(`/todo-lists/${id}`, {title})
+        return axiosInstance.put<{title: string},AxiosResponse<ResponseType>>(`/todo-lists/${id}`, {title}).then(res => res.data)
     },
 }
 

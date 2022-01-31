@@ -1,7 +1,8 @@
 import {ThunkType} from './store';
-import {authAPI} from './auth-api';
+import {authAPI} from '../api/auth-api';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
 import {setIsLoggedIn, setUserLogin} from './auth-reducer';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 
@@ -11,49 +12,40 @@ const initialState = {
     isInit: false
 }
 
-type InitialStateType = typeof initialState
-
-export const appReducer = (state: InitialStateType = initialState, action: AppActionType): InitialStateType => {
-    switch (action.type) {
-        case 'APP/SET-STATUS':
-            return {...state, status: action.status}
-        case 'APP/SET-ERROR':
-            return {...state, error: action.error}
-        case 'APP/SET-IS-INIT':
-            return {...state, isInit: action.isInit}
-        default:
-            return state
+const slice = createSlice({
+    name: 'app',
+    initialState: initialState,
+    reducers: {
+        setAppStatus(state, action: PayloadAction<{ status: RequestStatusType }>) {
+            state.status = action.payload.status
+        },
+        setAppError(state, action: PayloadAction<{ error: string | null }>) {
+            state.error = action.payload.error
+        },
+        setIsInit(state, action: PayloadAction<{ isInit: boolean }>) {
+            state.isInit = action.payload.isInit
+        }
     }
-}
+})
+
+export const appReducer = slice.reducer
+export const {setAppStatus, setAppError, setIsInit} = slice.actions
 
 export const initAppTC = (): ThunkType => async (dispatch) => {
-    debugger
-    dispatch(setAppStatusAC('loading'))
+    dispatch(setAppStatus({ status:'loading' }))
     try {
-        debugger
         let res = await authAPI.me()
         if (res.data.resultCode === 0) {
-            dispatch(setUserLogin(res.data.data.login))
-            console.log(res.data.data.login)
-            dispatch(setIsLoggedIn(true))
-            dispatch(setAppStatusAC('succeeded'))
+            dispatch(setUserLogin({ login: res.data.data.login }))
+            dispatch(setIsLoggedIn({ isLoggedIn: true }))
+            dispatch(setAppStatus({ status: 'succeeded' }))
         } else {
             handleServerAppError(res.data, dispatch)
-            dispatch(setAppStatusAC('failed'))
+            dispatch(setAppStatus({ status: 'failed' }))
         }
     } catch (e: any) {
         handleServerNetworkError(e, dispatch)
     } finally {
-        dispatch(setIsInitAC(true))
+        dispatch(setIsInit({ isInit: true }))
     }
 }
-
-export const setAppStatusAC = (status: RequestStatusType) => ({type: 'APP/SET-STATUS', status} as const)
-export const setAppErrorAC = (error: string | null) => ({type: 'APP/SET-ERROR', error} as const)
-export const setIsInitAC = (isInit: boolean) => ({type: 'APP/SET-IS-INIT', isInit} as const)
-
-export type SetAppStatusType = ReturnType<typeof setAppStatusAC>
-export type SetAppErrorType = ReturnType<typeof setAppErrorAC>
-export type SetIsInitAT = ReturnType<typeof setIsInitAC>
-
-export type AppActionType = SetAppStatusType | SetAppErrorType | SetIsInitAT

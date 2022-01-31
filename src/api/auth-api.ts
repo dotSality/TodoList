@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
-import {ResponseType} from '../api/todolist-api';
+import {ResponseType} from './todolist-api';
 
 const axiosInstance = axios.create({
     baseURL: `https://social-network.samuraijs.com/api/1.1/`,

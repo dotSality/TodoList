@@ -7,7 +7,6 @@ import {AppRootStateType, useAppSelector} from '../../state/store';
 import {TodoType} from '../../api/todolist-api';
 import {AddItemForm} from '../AddItemForm/AddItemForm';
 import {Navigate} from 'react-router-dom';
-import {setAppStatusAC} from '../../state/app-reducer';
 
 export const AllTodo = () => {
 
@@ -15,9 +14,7 @@ export const AllTodo = () => {
     const {isLoggedIn} = useAppSelector(state => state.auth)
     const dispatch = useDispatch()
     useEffect(() => {
-        if(!isLoggedIn) {
-            return
-        }
+        if(!isLoggedIn) return
         dispatch(getTodoTC())
     }, [])
 
