@@ -1,5 +1,4 @@
 import {AppInitStateType, appReducer, setAppError, setAppStatus} from './app-reducer';
-import {start} from 'repl';
 
 
 let startState: AppInitStateType;

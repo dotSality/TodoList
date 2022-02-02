@@ -12,14 +12,18 @@ import {ErrorPage} from './Components/Error/Error';
 import {initAppTC} from './state/app-reducer';
 import {logoutTC} from './state/auth-reducer';
 
-function App() {
+type PropsType = {
+    demo?: boolean
+}
+
+function App({demo}: PropsType) {
 
     const {status, isInit} = useAppSelector(state => state.app)
     const dispatch = useDispatch()
     const {isLoggedIn, login} = useAppSelector(state => state.auth)
 
     useEffect(() => {
-        dispatch(initAppTC())
+        if(!demo) dispatch(initAppTC())
     }, [isLoggedIn])
 
     const logoutHandler = () => dispatch(logoutTC())
@@ -50,7 +54,7 @@ function App() {
             {status === 'loading' && <LinearProgress/>}
             <Container fixed>
                 <Routes>
-                    <Route path={'/'} element={<AllTodo/>}/>
+                    <Route path={'/'} element={<AllTodo demo={demo}/>}/>
                     <Route path={'/login'} element={<Login/>}/>
                     <Route path={'/error-page'} element={<ErrorPage/>}/>
                     <Route path={'*'} element={<Navigate to={'/error-page'}/>}/>

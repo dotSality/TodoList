@@ -8,13 +8,17 @@ import {TodoType} from '../../api/todolist-api';
 import {AddItemForm} from '../AddItemForm/AddItemForm';
 import {Navigate} from 'react-router-dom';
 
-export const AllTodo = () => {
+type PropsType = {
+    demo?: boolean
+}
+
+export const AllTodo = ({demo}: PropsType) => {
 
     const todoLists = useSelector<AppRootStateType, TodoType[]>(state => state.todolists)
     const {isLoggedIn} = useAppSelector(state => state.auth)
     const dispatch = useDispatch()
     useEffect(() => {
-        if(!isLoggedIn) return
+        if(demo || !isLoggedIn) return
         dispatch(getTodoTC())
     }, [])
 
@@ -29,6 +33,7 @@ export const AllTodo = () => {
                     <Todolist
                         todolistId={tl.id}
                         title={tl.title}
+                        demo={demo}
                     />
                 </Paper>
             </Grid>

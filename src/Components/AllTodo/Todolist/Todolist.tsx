@@ -13,15 +13,17 @@ import {Delete} from '@mui/icons-material';
 type PropsType = {
     todolistId: string
     title: string
+    demo?: boolean
 }
 
-export const Todolist = React.memo(function (props: PropsType) {
+export const Todolist = React.memo(function ({todolistId,title,demo}: PropsType) {
 
-    const todoList = useAppSelector(state => state.todolists.filter(tl => tl.id === props.todolistId)[0])
-    const tasks = useAppSelector(state => state.tasks[props.todolistId])
+    const todoList = useAppSelector(state => state.todolists.filter(tl => tl.id === todolistId)[0])
+    const tasks = useAppSelector(state => state.tasks[todolistId])
     const dispatch = useDispatch()
 
     const addTask = useCallback((title: string) => {
+        if (demo) return
         dispatch(createTaskTC(todoList.id, title));
     }, [dispatch, todoList.id])
 
@@ -34,11 +36,11 @@ export const Todolist = React.memo(function (props: PropsType) {
     },[dispatch, todoList.id])
 
     const onAllClickHandler = useCallback(() => dispatch(changeTodoFilter(
-        {todoId: props.todolistId, filter: "all"})), [dispatch, props.todolistId]);
+        {todoId: todolistId, filter: "all"})), [dispatch, todolistId]);
     const onActiveClickHandler = useCallback(() => dispatch(changeTodoFilter(
-        {todoId: props.todolistId, filter: "active"})), [dispatch, props.todolistId]);
+        {todoId: todolistId, filter: "active"})), [dispatch, todolistId]);
     const onCompletedClickHandler = useCallback(() => dispatch(changeTodoFilter(
-        {todoId: props.todolistId, filter: "completed"})), [dispatch, props.todolistId]);
+        {todoId: todolistId, filter: "completed"})), [dispatch, todolistId]);
 
     let tasksForRender = tasks;
     if (todoList.filter === "active") tasksForRender = tasks.filter(t => t.status === TaskStatuses.New);
@@ -47,7 +49,7 @@ export const Todolist = React.memo(function (props: PropsType) {
     return <div className={'todoList'}>
         <Typography align={'center'}>
             <EditableSpan disabled={todoList.entityStatus === 'loading'}
-                setNewTitle={changeTodolistTitle} title={props.title}/>
+                setNewTitle={changeTodolistTitle} title={title}/>
             <IconButton disabled={todoList.entityStatus === 'loading'} onClick={removeTodolist}>
                 <Delete/>
             </IconButton>
@@ -56,7 +58,7 @@ export const Todolist = React.memo(function (props: PropsType) {
         <List>
             {
                 tasksForRender && tasksForRender.map(t => {
-                    return <Task key={t.id} task={t} todolistId={props.todolistId}/>
+                    return <Task key={t.id} task={t} todolistId={todolistId}/>
                 })
             }
         </List>
