@@ -48,17 +48,17 @@ export type TaskType = {
     deadline: string,
     id: string,
     todoListId: string,
-    order: string,
+    order: number,
     addedDate: string,
 }
 
 export type TaskModelType = {
-    title: string,
-    description: string,
-    status: TaskStatuses,
-    priority: TaskPriorities,
-    startDate: string,
-    deadline: string,
+    title?: string
+    description?: string
+    status?: TaskStatuses
+    priority?: TaskPriorities
+    startDate?: string
+    deadline?: string
 }
 
 type Response<D = {}> = {

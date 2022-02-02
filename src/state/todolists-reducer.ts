@@ -17,14 +17,14 @@ const slice = createSlice({
     name: 'todo',
     initialState: initialState,
     reducers: {
-        removeTodo(state, action: PayloadAction<{ todoId: string }>) {
-            return state.filter(tl => tl.id !== action.payload.todoId)
+        removeTodo(state, action: PayloadAction<string>) {
+            return state.filter(tl => tl.id !== action.payload)
         },
-        addTodo(state, action: PayloadAction<{ title: string, todo: TodoDomainType }>) {
-            state.unshift({...action.payload.todo, filter: 'all', entityStatus: 'idle'})
+        addTodo(state, action: PayloadAction<TodoType>) {
+            state.unshift({...action.payload, filter: 'all', entityStatus: 'idle'})
         },
-        setTodo(state, action: PayloadAction<{ todos: TodoType[] }>) {
-            return action.payload.todos.map(tl => ({...tl, filter: 'all', entityStatus: 'idle'}))
+        setTodo(state, action: PayloadAction<TodoType[]>) {
+            return action.payload.map(tl => ({...tl, filter: 'all', entityStatus: 'idle'}))
         },
         changeTodoTitle(state, action: PayloadAction<{ title: string, todoId: string }>) {
             const index = state.findIndex(tl => tl.id === action.payload.todoId)
@@ -63,7 +63,7 @@ export const getTodoTC = (): ThunkType =>
         todolistApi.getTLs()
             .then(res => {
                 if (res.data) {
-                    dispatch(setTodo({todos: res.data}))
+                    dispatch(setTodo(res.data))
                     return res.data
                 }
             })
@@ -83,7 +83,7 @@ export const removeTodoTC = (todoId: string): ThunkType =>
         todolistApi.deleteTL(todoId)
             .then(res => {
                 if (res.resultCode === 0) {
-                    dispatch(removeTodo({todoId}))
+                    dispatch(removeTodo(todoId))
                     dispatch(setAppStatus({status: 'idle'}))
                 } else {
                     handleServerAppError(res, dispatch)
@@ -98,7 +98,7 @@ export const createTodoTC = (title: string): ThunkType =>
         todolistApi.createTL(title)
             .then(res => {
                 if (res.resultCode === 0) {
-                    dispatch(addTodo({title, todo: res.data.item}))
+                    dispatch(addTodo(res.data.item))
                     dispatch(setAppStatus({status: 'idle'}))
                 } else {
                     handleServerAppError(res, dispatch)

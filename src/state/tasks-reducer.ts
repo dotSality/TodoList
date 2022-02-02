@@ -5,7 +5,7 @@ import {setAppError, setAppStatus} from './app-reducer';
 import {handleServerNetworkError} from '../utils/error-utils';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-type TasksStateType = {
+export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
 
@@ -20,8 +20,8 @@ const slice = createSlice({
             const index = tasks.findIndex(t => t.id === action.payload.taskId)
             if (index > -1) tasks.splice(index, 1)
         },
-        addTask(state, action: PayloadAction<{ task: TaskType }>) {
-            state[action.payload.task.todoListId].unshift(action.payload.task)
+        addTask(state, action: PayloadAction<TaskType>) {
+            state[action.payload.todoListId].unshift(action.payload)
         },
         updateTask(state, action: PayloadAction<{ taskId: string, model: TaskModelType, todoId: string }>) {
             let tasks = state[action.payload.todoId]
@@ -39,13 +39,13 @@ const slice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(addTodo, (state, action) => {
-            state[action.payload.todo.id] = []
+            state[action.payload.id] = []
         });
         builder.addCase(setTodo, (state, action) => {
-            action.payload.todos.forEach(tl => state[tl.id] = [])
+            action.payload.forEach(tl => state[tl.id] = [])
         });
         builder.addCase(removeTodo, (state, action) => {
-            delete state[action.payload.todoId]
+            delete state[action.payload]
         });
         builder.addCase(clearTodoData, (state, action) => {
             return {}
@@ -86,7 +86,7 @@ export const createTaskTC = (tlId: string, title: string): ThunkType =>
         tasksAPI.createTask(tlId, title)
             .then(res => {
                 if (res.resultCode === 0) {
-                    dispatch(addTask({task: res.data.item}))
+                    dispatch(addTask(res.data.item))
                     dispatch(setAppStatus({status: 'idle'}))
                 } else {
                     if (res.messages.length) {
