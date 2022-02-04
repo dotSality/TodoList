@@ -5,7 +5,7 @@ import {EditableSpan} from '../../../EditableSpan';
 import {useDispatch} from 'react-redux';
 import {useAppSelector} from '../../../state/store';
 import {changeTodoFilter, changeTodoTitleTC, removeTodoTC} from '../../../state/todolists-reducer';
-import {createTaskTC} from '../../../state/tasks-reducer';
+import {createTask} from '../../../state/tasks-reducer';
 import {Task} from './Task/Task';
 import {Button, ButtonGroup, IconButton, List, Typography} from '@mui/material';
 import {Delete} from '@mui/icons-material';
@@ -24,7 +24,7 @@ export const Todolist = React.memo(function ({todolistId,title,demo}: PropsType)
 
     const addTask = useCallback((title: string) => {
         if (demo) return
-        dispatch(createTaskTC(todoList.id, title));
+        dispatch(createTask({tlId: todoList.id, title}));
     }, [dispatch, todoList.id])
 
     const changeTodolistTitle = useCallback((title: string) => {

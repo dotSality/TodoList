@@ -2,7 +2,7 @@ import {ThunkType} from './store';
 import {todolistApi, TodoType} from '../api/todolist-api';
 import {RequestStatusType, setAppStatus} from './app-reducer';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
-import {getTasksTC} from './tasks-reducer';
+import {fetchTasks} from './tasks-reducer';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export type FilterValuesType = "all" | "active" | "completed";
@@ -69,8 +69,7 @@ export const getTodoTC = (): ThunkType =>
             })
             .then(todos => {
                 if (todos) {
-                    todos.forEach(tl => dispatch(getTasksTC(tl.id)))
-                    dispatch(setAppStatus({status: 'idle'}))
+                    todos.forEach(tl => dispatch(fetchTasks(tl.id)))
                 }
             })
             .catch(err => handleServerNetworkError(err, dispatch))

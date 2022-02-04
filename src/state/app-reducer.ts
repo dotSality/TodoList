@@ -34,20 +34,19 @@ export const appReducer = slice.reducer
 export const {setAppStatus, setAppError, setIsInit} = slice.actions
 
 export const initAppTC = (): ThunkType => async (dispatch) => {
-    dispatch(setAppStatus({ status:'loading' }))
+    dispatch(setAppStatus({status: 'loading'}))
     try {
         let res = await authAPI.me()
         if (res.data.resultCode === 0) {
-            dispatch(setUserLogin({ login: res.data.data.login }))
-            dispatch(setIsLoggedIn({ isLoggedIn: true }))
-            dispatch(setAppStatus({ status: 'succeeded' }))
+            dispatch(setUserLogin({login: res.data.data.login}))
+            dispatch(setIsLoggedIn({isLoggedIn: true}))
         } else {
             handleServerAppError(res.data, dispatch)
-            dispatch(setAppStatus({ status: 'failed' }))
+            dispatch(setAppStatus({status: 'failed'}))
         }
     } catch (e: any) {
         handleServerNetworkError(e, dispatch)
     } finally {
-        dispatch(setIsInit({ isInit: true }))
+        dispatch(setIsInit({isInit: true}))
     }
 }
