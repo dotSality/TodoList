@@ -4,7 +4,7 @@ import {AddItemForm} from '../../AddItemForm/AddItemForm';
 import {EditableSpan} from '../../../EditableSpan';
 import {useDispatch} from 'react-redux';
 import {useAppSelector} from '../../../state/store';
-import {changeTodoFilter, changeTodoTitleTC, removeTodoTC} from '../../../state/todolists-reducer';
+import {changeTodoFilter, changeTodoTitle, removeTodo} from '../../../state/todolists-reducer';
 import {createTask} from '../../../state/tasks-reducer';
 import {Task} from './Task/Task';
 import {Button, ButtonGroup, IconButton, List, Typography} from '@mui/material';
@@ -28,11 +28,11 @@ export const Todolist = React.memo(function ({todolistId,title,demo}: PropsType)
     }, [dispatch, todoList.id])
 
     const changeTodolistTitle = useCallback((title: string) => {
-        dispatch(changeTodoTitleTC(todoList.id, title));
+        dispatch(changeTodoTitle({todoId: todoList.id, title}));
     }, [dispatch, todoList.id])
 
     const removeTodolist = useCallback(() => {
-        dispatch(removeTodoTC(todoList.id))
+        dispatch(removeTodo(todoList.id))
     },[dispatch, todoList.id])
 
     const onAllClickHandler = useCallback(() => dispatch(changeTodoFilter(

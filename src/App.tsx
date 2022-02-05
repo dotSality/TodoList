@@ -9,8 +9,8 @@ import {AllTodo} from './Components/AllTodo/AllTodo';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {Login} from './Components/Login/Login';
 import {ErrorPage} from './Components/Error/Error';
-import {initAppTC} from './state/app-reducer';
-import {logoutTC} from './state/auth-reducer';
+import {initApp} from './state/app-reducer';
+import {logout} from './state/auth-reducer';
 
 type PropsType = {
     demo?: boolean
@@ -23,10 +23,10 @@ function App({demo}: PropsType) {
     const {isLoggedIn, login} = useAppSelector(state => state.auth)
 
     useEffect(() => {
-        if(!demo) dispatch(initAppTC())
+        if(!demo) dispatch(initApp())
     }, [isLoggedIn])
 
-    const logoutHandler = () => dispatch(logoutTC())
+    const logoutHandler = () => dispatch(logout())
 
     if (!isInit) {
         return <div

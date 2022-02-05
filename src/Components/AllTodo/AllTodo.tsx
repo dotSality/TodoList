@@ -1,9 +1,9 @@
 import {Grid, Paper} from '@mui/material';
 import {Todolist} from './Todolist/Todolist';
 import React, {useCallback, useEffect} from 'react';
-import {createTodoTC, getTodoTC} from '../../state/todolists-reducer';
+import {createTodo, fetchTodos} from '../../state/todolists-reducer';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppRootStateType, useAppSelector} from '../../state/store';
+import {RootStateType, useAppSelector} from '../../state/store';
 import {TodoType} from '../../api/todolist-api';
 import {AddItemForm} from '../AddItemForm/AddItemForm';
 import {Navigate} from 'react-router-dom';
@@ -14,16 +14,16 @@ type PropsType = {
 
 export const AllTodo = ({demo}: PropsType) => {
 
-    const todoLists = useSelector<AppRootStateType, TodoType[]>(state => state.todolists)
+    const todoLists = useSelector<RootStateType, TodoType[]>(state => state.todolists)
     const {isLoggedIn} = useAppSelector(state => state.auth)
     const dispatch = useDispatch()
     useEffect(() => {
         if(demo || !isLoggedIn) return
-        dispatch(getTodoTC())
+        dispatch(fetchTodos())
     }, [])
 
     const addTodoList = useCallback((title: string) => {
-        dispatch(createTodoTC(title))
+        dispatch(createTodo(title))
     }, [dispatch])
 
     const todoListsComponents = todoLists.map(tl => {

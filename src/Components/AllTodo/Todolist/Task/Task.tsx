@@ -1,5 +1,5 @@
 import {useDispatch} from 'react-redux';
-import {deleteTask, updateTaskTC} from '../../../../state/tasks-reducer';
+import {deleteTask, updateTask} from '../../../../state/tasks-reducer';
 import React, {ChangeEvent, useCallback} from 'react';
 import {EditableSpan} from '../../../../EditableSpan';
 import {TaskStatuses, TaskType} from '../../../../api/tasks-api';
@@ -18,11 +18,11 @@ export const Task = React.memo(({task, todolistId}: TaskPropsType) => {
         [dispatch, task.id, todolistId])
     const changeTaskStatus = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         let status = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New
-        dispatch(updateTaskTC(todolistId, task.id, {status}))
+        dispatch(updateTask({todoId: todolistId, taskId: task.id, model: {status}}))
     }, [dispatch, task.id, todolistId])
 
     const changeTitle = useCallback((title: string) => {
-        dispatch(updateTaskTC(todolistId, task.id, {title}))
+        dispatch(updateTask({todoId: todolistId, taskId: task.id, model: {title}}))
     }, [dispatch, task.id, todolistId])
     return <ListItem
         style={{padding: '0', display: 'flex', justifyContent: 'space-between'}}

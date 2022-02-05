@@ -20,7 +20,7 @@ export const tasksAPI = {
         return axiosInstance.delete<ResponseType>(`${tlId}/tasks/${taskId}`).then(res => res.data)
     },
     updateTask(tlId: string, taskId: string, task: TaskModelType) {
-        return axiosInstance.put<TaskModelType, AxiosResponse<ResponseType<{ item: TaskType }>>>(`${tlId}/tasks/${taskId}`, task).then(res => res.data.data.item)
+        return axiosInstance.put<TaskModelType, AxiosResponse<ResponseType<{ item: TaskType }>>>(`${tlId}/tasks/${taskId}`, task).then(res => res.data)
     }
 }
 

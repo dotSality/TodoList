@@ -4,7 +4,7 @@ import {todolistsReducer} from '../../state/todolists-reducer';
 import {appReducer} from '../../state/app-reducer';
 import {authReducer} from '../../state/auth-reducer';
 import {TaskPriorities, TaskStatuses} from '../../api/tasks-api';
-import {AppRootStateType} from '../../state/store';
+import {RootStateType} from '../../state/store';
 import {v1} from 'uuid';
 import {configureStore} from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
     auth: authReducer,
 })
 
-const initialGlobalState: AppRootStateType = {
+const initialGlobalState: RootStateType = {
     todolists: [
         {id: "todolistId1", title: "What to learn", filter: "all", entityStatus: 'idle', addedDate: '', order: 0},
         {id: "todolistId2", title: "What to buy", filter: "all", entityStatus: 'loading', addedDate: '', order: 0}

@@ -31,8 +31,10 @@ export type TodoType = {
     order: number,
 }
 
+export type FieldErrorsType = {field: string, error: string}
+
 export type ResponseType<T = {}> = {
-    fieldsErrors?: string[],
+    fieldsErrors?: FieldErrorsType[],
     messages: string[],
     resultCode: number,
     data: T
