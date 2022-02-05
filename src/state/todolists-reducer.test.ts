@@ -1,5 +1,5 @@
 import {RequestStatusType} from "./app-reducer"
-import {addTodo, changeTlEntity, changeTodoFilter, changeTodoTitle, FilterValuesType, removeTodo, setTodo, TodoDomainType, todolistsReducer} from './todolists-reducer';
+import {changeTlEntity, changeTodoFilter, changeTodoTitle, createTodo, fetchTodos, FilterValuesType, removeTodo, TodoDomainType, todolistsReducer} from './todolists-reducer';
 import {v1} from 'uuid';
 
 let todolistId1: string
@@ -16,7 +16,11 @@ beforeEach(() => {
 })
 
 test('correct todolist should be removed', () => {
-    const endState = todolistsReducer(startState, removeTodo(todolistId1))
+
+
+    let action = removeTodo.fulfilled(todolistId1, 'requestId', todolistId1);
+
+    const endState = todolistsReducer(startState, action)
 
     expect(endState.length).toBe(1)
     expect(endState[0].id).toBe(todolistId2)
@@ -32,7 +36,8 @@ test('correct todolist should be added', () => {
         order: 0
     }
 
-    const endState = todolistsReducer(startState, addTodo(todolist))
+    let action = createTodo.fulfilled(todolist, 'reauestId', 'qq');
+    const endState = todolistsReducer(startState, action)
 
     expect(endState.length).toBe(3)
     expect(endState[0].title).toBe(todolist.title)
@@ -42,7 +47,7 @@ test('correct todolist should be added', () => {
 test('correct todolist should change its name', () => {
     let newTodolistTitle = 'New Todolist'
 
-    const action = changeTodoTitle({todoId: todolistId2, title: newTodolistTitle})
+    const action = changeTodoTitle.fulfilled({todoId: todolistId2, title: newTodolistTitle}, 'requestId', {todoId: todolistId2, title: newTodolistTitle})
 
     const endState = todolistsReducer(startState, action)
 
@@ -62,7 +67,7 @@ test('correct filter of todolist should be changed', () => {
 })
 test('todolists should be added', () => {
 
-    const action = setTodo(startState)
+    const action = fetchTodos.fulfilled(startState, 'requestId')
 
     const endState = todolistsReducer([], action)
 

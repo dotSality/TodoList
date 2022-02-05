@@ -1,6 +1,6 @@
 import {TaskPriorities, TaskStatuses} from '../api/tasks-api';
 import {createTask, deleteTask, fetchTasks, tasksReducer, TasksStateType, updateTask} from './tasks-reducer'
-import {createTodo, removeTodo} from './todolists-reducer'
+import {createTodo, fetchTodos, removeTodo, TodoDomainType} from './todolists-reducer'
 
 let startState: TasksStateType = {};
 beforeEach(() => {
@@ -89,12 +89,15 @@ test('title of specified task should be changed', () => {
     expect(endState["todolistId2"][0].title).toBe("bread");
 });
 test('new array should be added when new todolist is added', () => {
-    const action = createTodo.fulfilled(_,_,{
+    let todo: TodoDomainType = {
         id: "blabla",
         title: "new todolist",
         order: 0,
-        addedDate: ''
-    });
+        addedDate: '',
+        entityStatus: 'idle',
+        filter: 'all',
+    };
+    const action = createTodo.fulfilled(todo, 'requestId','newTodo');
 
     const endState = tasksReducer(startState, action)
 
@@ -120,10 +123,11 @@ test('propertry with todolistId should be deleted', () => {
 });
 
 test('empty arrays should be added when we set todolists', () => {
-    const action = setTodo([
-        {id: "1", title: "title 1", order: 0, addedDate: "",},
-        {id: "2", title: "title 2", order: 0, addedDate: ""}
-    ])
+    let startState = [
+        {id: "1", title: "title 1", order: 0, addedDate: "", filter: 'all', entityStatus: 'idle'},
+        {id: "2", title: "title 2", order: 0, addedDate: "", filter: 'all', entityStatus: 'idle'}
+    ] as TodoDomainType[];
+    const action = fetchTodos.fulfilled(startState, 'requestId')
 
     const endState = tasksReducer({}, action)
 
