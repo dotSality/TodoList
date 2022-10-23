@@ -9,8 +9,8 @@ import {AllTodo} from './Components/AllTodo/AllTodo';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {Login} from './Components/Login/Login';
 import {ErrorPage} from './Components/Error/Error';
-import {initApp} from './state/app-reducer';
 import {logout} from './state/auth-reducer';
+import { initApp } from './state/app-reducer';
 
 type PropsType = {
     demo?: boolean
@@ -47,7 +47,16 @@ function App({demo}: PropsType) {
                         Todolists
                     </Typography>
                     {isLoggedIn && <div>
-                        <span style={{padding: '20px'}}>{login}</span><Button onClick={logoutHandler} color="inherit" variant={"outlined"}>Logout</Button>
+                        <span style={{padding: '20px'}}>
+                            {login}
+                        </span>
+                        <Button
+                          onClick={logoutHandler}
+                          color="inherit"
+                          variant={"outlined"}
+                        >
+                            Logout
+                        </Button>
                     </div>}
                 </Toolbar>
             </AppBar>

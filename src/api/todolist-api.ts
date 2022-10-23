@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 
 export const todolistApi = {
     getTLs() {
-        return axiosInstance.get<TodoDomainType[]>(`todo-lists`)
+        return axiosInstance.get<TodoDomainType[]>(`todo-lists`).then(res => res.data)
     },
     createTL(title: string) {
         return axiosInstance.post<{title: string}, AxiosResponse<ResponseType<{ item: TodoDomainType }>>>(`todo-lists`, {title}).then(res => res.data)

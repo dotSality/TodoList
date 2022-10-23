@@ -61,7 +61,7 @@ export type TaskModelType = {
     deadline?: string
 }
 
-type Response<D = {}> = {
+export type Response<D = {}> = {
     items: D,
     error: string[],
     totalCount: number
